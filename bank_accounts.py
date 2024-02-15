@@ -28,7 +28,37 @@ class BankAccount:
         try:
             self.viableTransaction(amount)
             self.balance = self.balance - amount
-            print("\nWithdraw completed.")
+            print("\nWithdraw completed of £" + str(amount) + ".")
             self.getBalance()
         except BalanceExeption as error:
             print(f"\nUnable to withdraw: {error}")
+
+    def transfer(self, amount, account):
+        try:
+            print("\n**********\n\nBeginning transfer..💰")
+            self.viableTransaction(amount)
+            self.withdraw(amount)
+            account.deposit(amount)
+            print("\nTransfer completer for £" + str(amount))
+        except BalanceExeption as error:
+            print(f"\nTransfer interrupted. {error}")
+
+class InterestRewardsAcct(BankAccount):
+     def deposit(self, amount):
+         self.balance = self.balance + (amount * 1.05)
+         print("\nDeposit complete.")
+         self.getBalance()
+
+class SavingAcct(InterestRewardsAcct):
+    def __init__(self, initialAmount, acctName):
+        super().__init__(initialAmount, acctName)
+        self.fee = 5
+
+    def withdraw(self, amount):
+        try:
+            self.viableTransaction(amount + self.fee)
+            self.balance = self.balance - (amount + self.fee)
+            print("\nWithdraw complete and fee of £" + str(self.fee) + " deducted!")
+            self.getBalance()
+        except BalanceExeption as error:
+            print(f"Withdrawn declined: {error}")
